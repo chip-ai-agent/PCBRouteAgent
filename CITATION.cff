@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below, and cite PCBWorld, on which it is built."
+title: "PCBRouteAgent"
+type: software
+authors:
+  - given-names: Yue
+    family-names: Zhang
+  - given-names: Jilei
+    family-names: Sun
+  - given-names: Liqiang
+    family-names: Jing
+  - given-names: Yijie
+    family-names: Wei
+  - given-names: Ruohan
+    family-names: Yang
+version: 0.1.0
+date-released: 2026-11-05
+license: BSD-3-Clause
+repository-code: "https://github.com/chip-ai-agent/PCBRouteAgent"
+url: "https://arxiv.org/abs/2611.08175"
+keywords:
+  - PCB routing
+  - LLM agents
+  - electronic design automation
+preferred-citation:
+  type: article
+  title: "PCBRouteAgent: How Close Are LLM Agents to Becoming PCB Routing Engineers?"
+  authors:
+    - given-names: Yue
+      family-names: Zhang
+    - given-names: Jilei
+      family-names: Sun
+    - given-names: Liqiang
+      family-names: Jing
+    - given-names: Yijie
+      family-names: Wei
+    - given-names: Ruohan
+      family-names: Yang
+  year: 2026
+  journal: "arXiv preprint arXiv:2611.08175"
+  url: "https://arxiv.org/abs/2611.08175"
+  identifiers:
+    - type: other
+      value: "arXiv:2611.08175"
+      description: "arXiv identifier (cs.AI)"
+references:
+  - type: software
+    title: "PCBWorld"
+    authors:
+      - name: "LG AI Research"
+    url: "https://github.com/LGAI-Research/PCBWorld"

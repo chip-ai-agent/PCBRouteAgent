@@ -1,0 +1,10 @@
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0400_laptimer58_Chickadee/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0423_induction-hob_temperature-sender/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0448_uedaino_uedaino/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0473_data-manager_data-manager/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0496_kitspace_f-91w/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0520_RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD_negative/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0546_ozinverter_ozinverterkicad/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0571_Brushless_ESC_Brushless_ESC/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0599_RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0626_TOBS_HybridChargeController/processed_v9_guide_v3.kicad_pcb

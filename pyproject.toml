@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pcbrouteagent"
+version = "0.1.0"
+description = "Closed-loop PCB routing: failure-driven LLM replanning over a deterministic executor, on the PCBWorld engine"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+keywords = ["pcb", "routing", "llm", "eda"]
+# PCBWorld (pcb_world, eval) and its engine are not on PyPI: see README, Installation.
+dependencies = [
+    "jsonschema>=4.23,<5",
+    "numpy>=1.26,<3",
+    "matplotlib>=3.9,<4",
+    "pillow>=10,<13",
+    "scipy>=1.13,<2",
+    "pyyaml>=6,<7",
+]
+
+[project.optional-dependencies]
+llm = ["anthropic>=0.111,<1", "openai>=2.31,<3"]
+native-views = ["cairosvg>=2.9,<3"]
+test = ["gymnasium>=1,<2", "ruff>=0.9,<1"]
+
+[project.urls]
+Repository = "https://github.com/chip-ai-agent/PCBRouteAgent"
+
+[tool.setuptools.packages.find]
+include = ["route_agent*"]
+
+[tool.ruff]
+line-length = 160
+target-version = "py312"

@@ -1,0 +1,24 @@
+name: Bug report
+description: Something in PCBRouteAgent does not work as documented
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The command you ran, what you expected, and what you got. Paste the error text.
+    validations:
+      required: true
+  - type: textarea
+    id: status
+    attributes:
+      label: Environment
+      description: Output of `python -m route_agent.cli.pipeline status` (it prints key names only, never values).
+      render: json
+    validations:
+      required: true
+  - type: input
+    id: board
+    attributes:
+      label: Board
+      description: Board id and test set, if the problem is board-specific.

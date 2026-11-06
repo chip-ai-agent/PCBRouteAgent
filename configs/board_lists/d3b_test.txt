@@ -1,0 +1,10 @@
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0113_maytal_Maytal/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0144_ottawa-badges-2016_ottawa-badge-tagger-2016/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0174_sensorboard_DiffIR/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0203_MOD-MPU9150_mod-mpu9150/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0232_ATtiny461Breakout_ATTiny461DevBoard/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0260_NiMH-Charger_NiMH Charger/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0288_raspberrypi-3-usb-hub_usb_hub/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0316_kicad-workshop_fancyboard/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0344_mavbridge_mavbridge/processed_v9_guide_v3.kicad_pcb
+${PCBWORLD_DATA_ROOT}/pcbench/exacad_sorted/0376_cat-trainer_teensy_base_pcb/processed_v9_guide_v3.kicad_pcb

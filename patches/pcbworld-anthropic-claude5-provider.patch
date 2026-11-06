@@ -1,0 +1,70 @@
+diff --git a/methods/llm_agent/policy/model_provider.py b/methods/llm_agent/policy/model_provider.py
+index 110631f..303e423 100644
+--- a/methods/llm_agent/policy/model_provider.py
++++ b/methods/llm_agent/policy/model_provider.py
+@@ -19,6 +19,7 @@ by character length (most chat APIs only return aggregate input tokens).
+ 
+ from __future__ import annotations
+ 
++import re
+ import time
+ 
+ # The Agent contract and its type aliases live in methods._shared.agent; the
+@@ -187,17 +188,29 @@ def _call_openai(system_prompt, user_prompt, model, temperature, max_tokens,
+     return choice.message.content, (resp.usage.prompt_tokens, resp.usage.completion_tokens)
+ 
+ 
+-def _call_anthropic(system_prompt, user_prompt, model, temperature, max_tokens, api_key=None):
++_ANTHROPIC_NO_TEMPERATURE = re.compile(r"claude-(opus|sonnet|haiku|fable|mythos)-5")
++
++
++def _call_anthropic(system_prompt, user_prompt, model, temperature, max_tokens, api_key=None,
++                    prompt_cache=False, effort=None, **_kw):
++    """One Anthropic Messages call.
++
++    Claude 5.x models reject ``temperature`` (400) and answer with a ``thinking`` block before
++    the text, so the sampling knob is dropped for them and only ``text`` blocks are joined.
++    ``prompt_cache`` tags the (board-constant) system prompt with ``cache_control``;
++    ``effort`` maps ``--api_reasoning_effort`` onto ``output_config.effort``.
++    """
+     from anthropic import Anthropic
+     client = Anthropic(**({"api_key": api_key} if api_key else {}))
+-    resp = client.messages.create(
+-        model=model,
+-        system=system_prompt,
+-        messages=[{"role": "user", "content": user_prompt}],
+-        temperature=temperature,
+-        max_tokens=max_tokens,
+-    )
+-    text = resp.content[0].text
++    system = ([{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}]
++              if prompt_cache else system_prompt)
++    kw = dict(model=model, system=system, messages=[{"role": "user", "content": user_prompt}], max_tokens=max_tokens)
++    if temperature is not None and not _ANTHROPIC_NO_TEMPERATURE.search(model):
++        kw["temperature"] = temperature
++    if effort:
++        kw["output_config"] = {"effort": {"minimal": "low"}.get(effort, effort)}
++    resp = client.messages.create(**kw)
++    text = "".join(getattr(b, "text", "") for b in resp.content if getattr(b, "type", "") == "text")
+     return text, (resp.usage.input_tokens, resp.usage.output_tokens)
+ 
+ 
+@@ -277,6 +290,9 @@ class APIProvider:
+         self.temperature = args.temperature
+         self.max_new_tokens = args.max_new_tokens
+         self.api_key = args.api_key
++        self.caller_kw = ({"prompt_cache": bool(getattr(args, "api_prompt_cache", False)),
++                           "effort": getattr(args, "api_reasoning_effort", None)}
++                          if args.api_provider == "anthropic" else {})
+ 
+     def generate(self, prompt_pairs, observations=None, **_kw):
+         del observations, _kw  # see VLLMProvider.generate docstring
+@@ -289,7 +305,7 @@ class APIProvider:
+                     text, counts = self.caller(
+                         system_prompt, user_prompt, self.model,
+                         self.temperature, self.max_new_tokens,
+-                        api_key=self.api_key,
++                        api_key=self.api_key, **self.caller_kw,
+                     )
+                     break
+                 except Exception as e:  # noqa: BLE001

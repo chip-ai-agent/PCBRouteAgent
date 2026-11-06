@@ -1,0 +1,3 @@
+[submodule "third_party/PCBWorld"]
+	path = third_party/PCBWorld
+	url = https://github.com/LGAI-Research/PCBWorld.git

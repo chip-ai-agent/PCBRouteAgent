@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.ruff_cache/
+.pytest_cache/
+
+# secrets
+.env
+*.env
+!.env.example
+
+# run outputs, boards and datasets never belong in the repository
+runs/
+research/
+var/
+*.kicad_pcb
+*.kicad_pro
+*.kicad_prl
+*.ses
+*.dsn
+*.zip
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store

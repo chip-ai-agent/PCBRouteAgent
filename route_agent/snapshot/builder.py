@@ -114,12 +114,21 @@ def build_snapshot(adapter: NativeAdapter, *, board_id: str, board_path: str, pr
                 raise KeyError(f"net {n!r} not on board")
             work.add(inv[n])
 
+    # A pad wholly outside the outline's bbox belongs to a part parked off the board: no track that
+    # stays on the board reaches it, so it joins no cluster and no edge is planned to it. The
+    # half-size margin keeps connector pads that overhang the edge.
+    ox1, oy1, ox2, oy2 = geometry.outline_bbox
+
+    def on_board(p: PadRec) -> bool:
+        r = max(p.width_mm, p.height_mm) / 2
+        return ox1 - r <= p.x_mm <= ox2 + r and oy1 - r <= p.y_mm <= oy2 + r
+
     routable = set(e.get_routable_nets())
     ratsnest = e.get_ratsnest()
     groups = e.get_pad_groups()
     conn: list[NetConnectivity] = []
     for code in sorted(routable | work):
-        npads = [p for p in pads if p.net_code == code and p.pad_type != "np_thru_hole"]
+        npads = [p for p in pads if p.net_code == code and p.pad_type != "np_thru_hole" and on_board(p)]
         clusters = []
         for k, grp in enumerate(_cluster_pads(adapter, npads)):
             clusters.append(Cluster(id=f"cluster:{code}:{k}", net_code=code,

@@ -472,13 +472,19 @@ class NativeAdapter:
 
     def run_drc(self, target_net_names: list[str] | None = None) -> dict:
         """Scoped DRC: only violations touching a target net are returned (the C++ cache
-        stays complete). Error-severity counts are what ``clean_pass`` reads."""
+        stays complete). Error-severity counts are what ``clean_pass`` reads.
+
+        The engine's incremental DRC returns what a full run would: it rechecks clearance only for
+        the tracks and vias changed since the last DRC, and that baseline travels with every
+        checkpoint, so a rollback is diffed correctly. A full run is the whole board's clearance
+        pass, ~20 s on a 245-track board and ~90 s on a 163-net board, and the joint repair asks for a DRC
+        twice per strategy tried."""
         self.log.tick("run_drc")
         e = self.e
         helper = getattr(e, "drc_helper", None)
         if helper is not None:
             helper.set_target_net_names(target_net_names)
-        viol = e.run_drc()
+        viol = e.run_drc_incremental()
         if helper is not None:
             viol = helper.get_violations()
         recs = []

@@ -491,6 +491,17 @@ class TestGatewayContracts(unittest.TestCase):
         # warning reported but not an error; the unconnected item is the ratsnest, counted apart
         self.assertEqual((r["count"], r["errors"], r["unconnected"]), (3, 1, 1))
 
+    def test_scoped_drc_runs_the_engine_incremental_drc(self):
+        calls = []
+        class Counting(FakeEngine):
+            def run_drc(self, rules_path=""):
+                calls.append("full"); return super().run_drc(rules_path)
+            def run_drc_incremental(self, rules_path=""):
+                calls.append("incremental"); return FakeEngine.run_drc(self, rules_path)
+        eng = Counting(PADS, bbox=[0, 0, 20, 20], drc=[violation("clearance", ["N1"])])
+        r = ToolGateway(NativeAdapter(eng), target_net_names=["N1"]).call("run_drc")
+        self.assertEqual((calls, r["errors"]), (["incremental"], 1))
+
     def test_set_via_dims_cannot_shrink_below_allowed_profiles(self):
         prof = self.snap.rules.profiles["Default"]
         d, h = prof["via_diameter_mm"], prof["via_drill_mm"]

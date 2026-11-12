@@ -1073,6 +1073,28 @@ class TestScriptedExecution(unittest.TestCase):
         self.assertTrue(det.shove_fallback)
         self.assertEqual(eng._ckpts, {})
 
+    def test_net_groups_check_rebuilds_connectivity_once_for_all_nets(self):
+        # the guard above reads every other work-set net before and after each task; one
+        # connectivity rebuild per read, not one per net, keeps it from dominating a large board
+        class Counting(FakeEngine):
+            rebuilds = 0
+
+            def build_connectivity(self):
+                Counting.rebuilds += 1
+
+        eng = Counting(PADS, bbox=[0, 0, 20, 20])
+        ad = NativeAdapter(eng)
+        snap = build_snapshot(ad, board_id="f", board_path="f", project_path="p", work_set_codes=[1, 2])
+        plan, _rep = validate_guide_dict(guide_for(snap), snap)
+        b = Budget.from_plan(plan.budget)
+        gw = ToolGateway(ad, budget=b, allowed_profiles=snap.rules.profiles, target_net_names=["N1", "N2"])
+        orch = Orchestrator(gw, ScriptedDetailed(gw, snap.board.snapshot_id, plan.plan_id), b,
+                            target_net_names=["N1", "N2"], rippable_nets={1, 2})
+        Counting.rebuilds = 0
+        groups = orch._net_groups(exclude_net=0)
+        self.assertEqual(Counting.rebuilds, 1)
+        self.assertEqual(groups, {n: eng.get_pad_groups()[n] for n in (1, 2)})
+
     def test_edge_already_joined_is_done_without_routing(self):
         # measured (MOD-MPU9150 n2_e9): GND was one pad group already, the engine answered "no ratsnest
         # edges for this net", the edge was reported failed and carried through four batch rounds while

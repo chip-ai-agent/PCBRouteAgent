@@ -305,6 +305,7 @@ class FakeEngine:
     def run_drc(self, rules_path=""):
         self.drc_helper.update(list(self._drc))
         return list(self._drc)
+    def run_drc_incremental(self, rules_path=""): return self.run_drc(rules_path)
     def get_drc_violations(self): return list(self._drc)
     def save(self, path, project_output_path=None):
         with open(path, "w") as f:

@@ -868,8 +868,16 @@ class Orchestrator:
         return rec, False
 
     def _net_groups(self, exclude_net: int) -> dict[int, int]:
-        """Pad groups of every other work-set net (adapter read, not a gateway call)."""
-        return {int(n): int(self.gw.adapter.inspect_net(int(n)).get("pad_groups", 0))
+        """Pad groups of every other work-set net (adapter read, not a gateway call).
+
+        One connectivity rebuild serves every net: the engine reports the pad groups of all nets
+        at once, while ``inspect_net`` rebuilds the whole board's connectivity for each one. This
+        check runs before and after every task, so per-net reads cost 2 x nets rebuilds a task
+        (on a board with 163 nets at ~0.1 s each: about 40 s a task, hours a board)."""
+        e = self.gw.adapter.e
+        e.build_connectivity()
+        groups = e.get_pad_groups()
+        return {int(n): int(groups.get(int(n), 0))
                 for n in sorted(self.rippable_nets or []) if int(n) != int(exclude_net)}
 
     def _run_task_guarded(self, task) -> TaskResult:

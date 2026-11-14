@@ -125,6 +125,18 @@ class TestSnapshot(unittest.TestCase):
         with self.assertRaises(KeyError):
             build_snapshot(ad, board_id="f", board_path="f", project_path="p", work_set_names=["NOPE"])
 
+    def test_pads_off_the_board_join_no_cluster(self):
+        # F is a part parked outside the outline: no cluster, so no edge is planned to it.
+        # G overhangs the edge by less than its half-size, like a connector pad: it stays.
+        pads = PADS + [{"ref": "F", "pad": "1", "x": 30.0, "y": 10.0, "net": 1, "name": "N1"},
+                       {"ref": "G", "pad": "1", "x": 20.4, "y": 10.0, "net": 2, "name": "N2"}]
+        snap = build_snapshot(NativeAdapter(FakeEngine(pads, bbox=[0, 0, 20, 20])), board_id="f", board_path="f",
+                              project_path="p", work_set_codes=[1, 2])
+        anchors = {a.pad_id for code in (1, 2) for c in snap.net(code).clusters for a in c.anchors}
+        self.assertNotIn("F:1", anchors)
+        self.assertIn("G:1", anchors)
+        self.assertEqual(len(snap.net(1).clusters), 2)
+
 
 class TestGuideValidation(unittest.TestCase):
     def setUp(self):

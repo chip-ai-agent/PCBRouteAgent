@@ -1,7 +1,7 @@
 """Local secrets and model selection for the CLIs, kept out of the repo and the shell rc.
 
 ``load_env_file`` reads ``$ROUTEAGENT_ENV``, else ``~/.config/routeagent/env``, else ``./.env`` — ``KEY=VALUE`` or
-``export KEY=VALUE`` lines, ``#`` comments, optional quotes — and puts the values into the
+``export KEY=VALUE`` lines, ``#`` comments (also after a value), optional quotes — and puts the values into the
 process environment. Values from the file WIN over the inherited environment, so a stale key
 exported by a shared ``~/.bashrc`` cannot shadow the valid one. Placeholder values (``REPLACE``,
 ``your-key``, ``<...>``) are skipped so an unedited template changes nothing. Only key NAMES are
@@ -13,6 +13,7 @@ Recognised keys: ``OPENAI_API_KEY``, ``ANTHROPIC_API_KEY``, ``ROUTEAGENT_OPENAI_
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 DEFAULT_PATH = Path.home() / ".config" / "routeagent" / "env"
@@ -31,8 +32,10 @@ def parse_env(text: str) -> dict[str, str]:
         if "=" not in line:
             continue
         k, v = (part.strip() for part in line.split("=", 1))
-        if len(v) >= 2 and v[0] == v[-1] and v[0] in "'\"":
-            v = v[1:-1]
+        if v[:1] in ("'", '"') and v.find(v[0], 1) > 0:
+            v = v[1:v.find(v[0], 1)]
+        else:
+            v = re.split(r"\s+#", v, maxsplit=1)[0]     # inline comment, as in .env.example
         if not k or not v or any(m in v.lower() for m in _PLACEHOLDERS):
             continue
         out[k] = v

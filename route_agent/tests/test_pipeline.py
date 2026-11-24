@@ -1457,6 +1457,14 @@ class TestProviders(unittest.TestCase):
             self.assertEqual(env["OTHER"], "kept")
             self.assertFalse(load_env_file(os.path.join(d, "missing"), env)["loaded"])
 
+    def test_env_file_inline_comments(self):
+        from route_agent.env import parse_env
+        text = ("ROUTEAGENT_ANTHROPIC_EFFORT=medium          # low | medium | high; not sent when unset\n"
+                "PCBWORLD_ROOT=/opt/PCBWorld             # default: third_party/PCBWorld\n"
+                "QUOTED='a # b'  # trailing\nHASH=pa#ss\n")
+        self.assertEqual(parse_env(text), {"ROUTEAGENT_ANTHROPIC_EFFORT": "medium", "PCBWORLD_ROOT": "/opt/PCBWorld",
+                                           "QUOTED": "a # b", "HASH": "pa#ss"})
+
     def test_cli_global_replay_and_status(self):
         from route_agent.cli.pipeline import build_parser
         a = build_parser().parse_args(["global", "s.json", "--provider", "file", "--guide", "g.json"])
